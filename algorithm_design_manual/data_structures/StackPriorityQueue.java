@@ -7,41 +7,45 @@ import java.util.ArrayList;
  */
 
 
-class Stack{
-    private ArrayList<Integer> minimums;
-    private int currentMin;
-    private ArrayList<Integer> stack;
+class Stack<T extends Comparable<T>>{
+    private ArrayList<T> minimums;
+    private T currentMin;
+    private ArrayList<T> stack;
     private int size;
 
     public Stack(){
         this.stack = new ArrayList<>();
         this.minimums = new ArrayList<>();
-        this.currentMin = Integer.MAX_VALUE;
+        this.currentMin = null;
         this.size = 0;
     }
 
-    void push(int x){
-        if(x<currentMin){
-            minimums.add(currentMin);
+    void push(T x){
+        if(currentMin == null || currentMin.compareTo(x) > 0) {
+            this.minimums.add(currentMin);
             currentMin = x;
         }
         stack.add(x);
         size += 1;
     }
 
-    int pop(){
+    T pop(){
         
-        int top = stack.get(size - 1);
-        if(top == currentMin){
+        T top = stack.get(size - 1);
+        if(top.equals(currentMin)){
             minimums.remove(minimums.size()-1);
-            currentMin = minimums.get(minimums.size() - 1);
+            currentMin = minimums.get(minimums.size()-1);
         }
         size -= 1;
         return top;
     }
 
-    int findmin(){
+    T findmin(){
         return currentMin;
+    }
+
+    public int getSize() {
+        return this.size;
     }
 }
 
@@ -49,7 +53,7 @@ class Stack{
 
     
     public static void main(String[] args){
-        Stack test = new Stack();
+        Stack<Integer> test = new Stack<>();
         test.push(1);
         test.push(2);
         System.out.println(test.findmin());
@@ -57,7 +61,13 @@ class Stack{
         test.push(10);
         test.push(8);
         System.out.println(test.findmin());
+        printStack(test);
     }
 
-  
+    static <T extends Comparable<T>> void printStack(Stack<T> s){
+        while(s.getSize() != 0) {
+            System.out.printf("Val: %s Min: %s %n", s.pop().toString(), s.findmin().toString());
+        }
+    }
+
  }
