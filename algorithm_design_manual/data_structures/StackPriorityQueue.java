@@ -8,45 +8,49 @@ import java.util.ArrayList;
 
 
 class Stack<T extends Comparable<T>>{
-    private ArrayList<T> minimums;
-    private T currentMin;
-    private ArrayList<T> stack;
-    private int size;
+    private StackNode<T> stack;
 
+    private class StackNode<T> {
+        T val;
+        T currMin;
+        StackNode<T> next;
+        StackNode<T> previous;
+    }
     public Stack(){
-        this.stack = new ArrayList<>();
-        this.minimums = new ArrayList<>();
-        this.currentMin = null;
-        this.size = 0;
+        this.stack = new StackNode<>();
     }
 
     void push(T x){
-        if(currentMin == null || currentMin.compareTo(x) > 0) {
-            this.minimums.add(currentMin);
-            currentMin = x;
+        StackNode<T> newNode = new StackNode<>();
+        newNode.val= x;
+        if(this.stack.currMin == null || this.stack.currMin.compareTo(x) > 0) {
+            newNode.currMin = x;
+        } else {
+            newNode.currMin = this.stack.currMin;
         }
-        stack.add(x);
-        size += 1;
+        this.stack.next = newNode;
+        newNode.previous = stack;
+        this.stack = newNode;
+
     }
 
     T pop(){
         
-        T top = stack.get(size - 1);
-        if(top.equals(currentMin)){
-            minimums.remove(minimums.size()-1);
-            currentMin = minimums.get(minimums.size()-1);
-        }
-        size -= 1;
+        T top = stack.val;
+        this.stack = this.stack.previous;
+        this.stack.next = null;
         return top;
     }
 
     T findmin(){
-        return currentMin;
+        return this.stack.currMin;
     }
 
-    public int getSize() {
-        return this.size;
+    boolean isEmpty(){
+        return this.stack.previous == null;
     }
+
+    
 }
 
  public class StackPriorityQueue{
@@ -56,17 +60,17 @@ class Stack<T extends Comparable<T>>{
         Stack<Integer> test = new Stack<>();
         test.push(1);
         test.push(2);
-        System.out.println(test.findmin());
         test.push(-1);
         test.push(10);
         test.push(8);
-        System.out.println(test.findmin());
         printStack(test);
     }
 
     static <T extends Comparable<T>> void printStack(Stack<T> s){
-        while(s.getSize() != 0) {
-            System.out.printf("Val: %s Min: %s %n", s.pop().toString(), s.findmin().toString());
+        while(!s.isEmpty()) {
+            T min = s.findmin();
+            T val = s.pop();
+            System.out.printf("Val: %s Min: %s %n", val, min);
         }
     }
 
